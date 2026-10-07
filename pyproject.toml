@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=80,<83"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dna-design-platform"
+version = "0.1.0"
+description = "Constraint-preserving annotated DNA design core"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["pydantic==2.13.5", "biopython==1.88"]
+
+[project.optional-dependencies]
+dev = ["pytest==9.1.1", "hypothesis==6.168.5", "ruff==0.16.10", "mypy==1.20.2"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+filterwarnings = ["error"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+untyped_calls_exclude = ["Bio"]
+
+[[tool.mypy.overrides]]
+module = ["Bio.*"]
+ignore_missing_imports = true
