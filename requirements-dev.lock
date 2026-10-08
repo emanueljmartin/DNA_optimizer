@@ -1,0 +1,23 @@
+# Resolved on Python 3.12.3, Linux, 2026-10-07.
+# Exact runtime, test, static-check and build-backend versions.
+# Install this file before the local editable project.
+annotated-types==0.8.0
+biopython==1.88
+hypothesis==6.168.5
+iniconfig==2.3.1
+librt==0.16.0
+mypy==1.20.2
+mypy_extensions==1.1.0
+numpy==2.5.3
+packaging==26.3
+pathspec==1.1.1
+pluggy==1.6.0
+pydantic==2.13.5
+pydantic_core==2.46.5
+Pygments==2.21.0
+pytest==9.1.1
+ruff==0.16.10
+setuptools==82.0.1
+sortedcontainers==2.4.0
+typing-inspection==0.4.4
+typing_extensions==4.16.0

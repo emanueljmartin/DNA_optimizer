@@ -1,0 +1,244 @@
+{
+  "$defs": {
+    "ColumnMapping": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": "id",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "sequence": {
+          "default": "sequence",
+          "minLength": 1,
+          "title": "Sequence",
+          "type": "string"
+        },
+        "group": {
+          "default": "group",
+          "minLength": 1,
+          "title": "Group",
+          "type": "string"
+        },
+        "host": {
+          "default": "host",
+          "minLength": 1,
+          "title": "Host",
+          "type": "string"
+        },
+        "condition": {
+          "default": "condition",
+          "minLength": 1,
+          "title": "Condition",
+          "type": "string"
+        },
+        "split": {
+          "default": "split",
+          "minLength": 1,
+          "title": "Split",
+          "type": "string"
+        },
+        "measured": {
+          "default": "measured",
+          "minLength": 1,
+          "title": "Measured",
+          "type": "string"
+        },
+        "predicted": {
+          "default": "predicted",
+          "minLength": 1,
+          "title": "Predicted",
+          "type": "string"
+        }
+      },
+      "title": "ColumnMapping",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "dataset_id": {
+      "minLength": 1,
+      "title": "Dataset Id",
+      "type": "string"
+    },
+    "dataset_version": {
+      "minLength": 1,
+      "title": "Dataset Version",
+      "type": "string"
+    },
+    "source": {
+      "minLength": 1,
+      "title": "Source",
+      "type": "string"
+    },
+    "license": {
+      "minLength": 1,
+      "title": "License",
+      "type": "string"
+    },
+    "license_source": {
+      "minLength": 1,
+      "title": "License Source",
+      "type": "string"
+    },
+    "accessed_date": {
+      "minLength": 1,
+      "title": "Accessed Date",
+      "type": "string"
+    },
+    "csv_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Csv Sha256",
+      "type": "string"
+    },
+    "evidence": {
+      "enum": [
+        "experimental",
+        "synthetic"
+      ],
+      "title": "Evidence",
+      "type": "string"
+    },
+    "measurement": {
+      "minLength": 1,
+      "title": "Measurement",
+      "type": "string"
+    },
+    "measured_units": {
+      "minLength": 1,
+      "title": "Measured Units",
+      "type": "string"
+    },
+    "prediction": {
+      "minLength": 1,
+      "title": "Prediction",
+      "type": "string"
+    },
+    "predicted_units": {
+      "minLength": 1,
+      "title": "Predicted Units",
+      "type": "string"
+    },
+    "model_version": {
+      "minLength": 1,
+      "title": "Model Version",
+      "type": "string"
+    },
+    "split_policy": {
+      "minLength": 1,
+      "title": "Split Policy",
+      "type": "string"
+    },
+    "group_definition": {
+      "minLength": 1,
+      "title": "Group Definition",
+      "type": "string"
+    },
+    "transforms": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Transforms",
+      "type": "array"
+    },
+    "exclusions": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Exclusions",
+      "type": "array"
+    },
+    "columns": {
+      "$ref": "#/$defs/ColumnMapping"
+    },
+    "scale": {
+      "default": "ordinal",
+      "enum": [
+        "ordinal",
+        "ratio"
+      ],
+      "title": "Scale",
+      "type": "string"
+    },
+    "comparable_units": {
+      "default": false,
+      "title": "Comparable Units",
+      "type": "boolean"
+    },
+    "calibration": {
+      "default": "none",
+      "enum": [
+        "none",
+        "multiplicative_log"
+      ],
+      "title": "Calibration",
+      "type": "string"
+    },
+    "training_overlap": {
+      "default": "unknown",
+      "enum": [
+        "unknown",
+        "verified_disjoint"
+      ],
+      "title": "Training Overlap",
+      "type": "string"
+    },
+    "training_overlap_source": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Training Overlap Source"
+    },
+    "training_sequence_sha256": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Training Sequence Sha256",
+      "type": "array"
+    },
+    "training_groups": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Training Groups",
+      "type": "array"
+    }
+  },
+  "required": [
+    "dataset_id",
+    "dataset_version",
+    "source",
+    "license",
+    "license_source",
+    "accessed_date",
+    "csv_sha256",
+    "evidence",
+    "measurement",
+    "measured_units",
+    "prediction",
+    "predicted_units",
+    "model_version",
+    "split_policy",
+    "group_definition"
+  ],
+  "title": "BenchmarkManifest",
+  "type": "object"
+}

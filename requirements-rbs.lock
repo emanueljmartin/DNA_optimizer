@@ -1,0 +1,4 @@
+# Optional local thermodynamic backend; installed alongside requirements-dev.lock.
+# Reviewed source versions and license notes: docs/scientific_provenance.md.
+ostir==1.1.3
+ViennaRNA==2.7.2

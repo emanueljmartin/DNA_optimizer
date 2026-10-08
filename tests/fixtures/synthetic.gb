@@ -1,0 +1,24 @@
+LOCUS       synthetic                 21 bp    DNA     linear   SYN 07-OCT-2026
+DEFINITION  Synthetic two-CDS coordinate regression fixture.
+ACCESSION   synthetic
+VERSION     synthetic.1
+KEYWORDS    .
+SOURCE      synthetic construct
+  ORGANISM  synthetic construct
+            other sequences.
+FEATURES             Location/Qualifiers
+     source          1..21
+                     /organism="synthetic construct"
+     promoter        1..3
+                     /label="protected promoter"
+     CDS             4..12
+                     /gene="forward"
+                     /transl_table=11
+                     /translation="ME"
+     CDS             complement(13..21)
+                     /gene="reverse"
+                     /transl_table=11
+                     /translation="ME"
+ORIGIN
+        1 gggatggaat aattattcca t
+//

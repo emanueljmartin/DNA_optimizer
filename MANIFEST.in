@@ -1,0 +1,12 @@
+include requirements-*.lock
+recursive-include frontend *.ts *.tsx *.css *.json *.html
+recursive-include frontend/public *.txt
+prune frontend/node_modules
+prune frontend/test-results
+prune frontend/playwright-report
+recursive-include src/dna_design/web *.html *.js *.css
+recursive-include scripts *.py *.sh
+recursive-include docs *.md *.json
+include AGENTS.md
+recursive-include .devcontainer *.json *.sh
+recursive-include tests *.py *.gb

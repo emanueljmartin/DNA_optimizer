@@ -5,6 +5,7 @@ from enum import StrEnum
 from Bio.Data import IUPACData
 from Bio.Seq import Seq
 from pydantic import ValidationError
+from pydantic_core import PydanticSerializationError
 
 from .errors import InvalidDesignError, TranslationError
 from .models import (
@@ -14,6 +15,7 @@ from .models import (
     MotifMode,
     MotifStrand,
     Mutability,
+    Topology,
 )
 from .motifs import find_motif
 from .permissions import effective_permissions
@@ -101,6 +103,45 @@ def _feasibility_checks(reference: Construct) -> list[Finding]:
                 )
             )
         if constraint.mode == MotifMode.REQUIRED:
+            # Overapproximate mutable bases as arbitrary A/C/G/T. If no possible
+            # scoped window can match even under that relaxation, impossibility
+            # is proven without guessing synonymous feasibility.
+            length = len(reference.sequence)
+            starts = (
+                range(length)
+                if reference.topology == Topology.CIRCULAR
+                else range(length - len(constraint.motif) + 1)
+            )
+            possible = False
+            for start in starts:
+                if constraint.position is not None and start != constraint.position:
+                    continue
+                positions = tuple((start + i) % length for i in range(len(constraint.motif)))
+                if constraint.region and not all(
+                    constraint.region.start <= p < constraint.region.end for p in positions
+                ):
+                    continue
+                if any(
+                    all(
+                        permissions[p].state != Mutability.LOCKED
+                        or reference.sequence[p] in IUPACData.ambiguous_dna_values[symbol]
+                        for p, symbol in zip(positions, motif, strict=True)
+                    )
+                    for motif in _oriented_motifs(constraint)
+                ):
+                    possible = True
+                    break
+            if not possible:
+                checks.append(
+                    Finding(
+                        status=CheckStatus.ERROR,
+                        code="REQUIRED_IMPOSSIBLE",
+                        message=f"REQUIRED {constraint.id}: no compatible location "
+                        "under locks/scope",
+                        constraint_id=constraint.id,
+                        proves_infeasible=True,
+                    )
+                )
             for avoid in avoids:
                 if _required_is_forbidden(constraint, avoid, len(reference.sequence)):
                     checks.append(
@@ -162,7 +203,7 @@ def check_feasibility(reference: Construct) -> ValidationReport:
     """Valid means no proven contradiction; it does NOT prove a solution exists."""
     try:
         reference = Construct.model_validate(reference.model_dump(warnings=False))
-    except ValidationError as exc:
+    except (ValidationError, PydanticSerializationError) as exc:
         return ValidationReport(
             checks=(Finding(status=CheckStatus.ERROR, code="REFERENCE_SCHEMA", message=str(exc)),)
         )
@@ -187,7 +228,7 @@ def validate_candidate(reference: Construct, candidate: Construct | str) -> Vali
     checks: list[Finding] = []
     try:
         reference = Construct.model_validate(reference.model_dump(warnings=False))
-    except ValidationError as exc:
+    except (ValidationError, PydanticSerializationError) as exc:
         return ValidationReport(
             checks=(Finding(status=CheckStatus.ERROR, code="REFERENCE_SCHEMA", message=str(exc)),)
         )
@@ -195,7 +236,7 @@ def validate_candidate(reference: Construct, candidate: Construct | str) -> Vali
         # Round-trip validation also rejects bypasses through model_copy/model_construct.
         try:
             candidate = Construct.model_validate(candidate.model_dump(warnings=False))
-        except ValidationError as exc:
+        except (ValidationError, PydanticSerializationError) as exc:
             return ValidationReport(
                 checks=(
                     Finding(status=CheckStatus.ERROR, code="CANDIDATE_SCHEMA", message=str(exc)),
@@ -244,7 +285,7 @@ def validate_candidate(reference: Construct, candidate: Construct | str) -> Vali
             Finding(
                 status=CheckStatus.ERROR,
                 code="SEQUENCE_LENGTH",
-                message="Phase 1 accepts substitutions only; candidate length differs from original",
+                message="Only substitutions are supported; candidate length differs from original",
             )
         )
         return ValidationReport(checks=tuple(checks))

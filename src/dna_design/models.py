@@ -3,7 +3,9 @@
 from enum import IntEnum, StrEnum
 from typing import Annotated, Self
 
+from Bio import Restriction
 from Bio.Data import CodonTable, IUPACData
+from Bio.Restriction.Restriction import AllEnzymes
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, field_validator, model_validator
 
 Coordinate = Annotated[int, Field(ge=0, strict=True)]
@@ -127,6 +129,16 @@ class MotifConstraint(FrozenModel):
         if not value or set(value) - set(IUPACData.ambiguous_dna_values):
             raise ValueError("Motifs must be nonempty uppercase IUPAC DNA")
         return value
+
+    @model_validator(mode="after")
+    def restriction_recognition_is_consistent(self) -> Self:
+        if self.enzyme is not None:
+            enzyme_class = getattr(Restriction, self.enzyme, None)
+            if enzyme_class is None or enzyme_class not in AllEnzymes:
+                raise ValueError(f"Unknown restriction enzyme: {self.enzyme}")
+            if self.motif != str(enzyme_class.site):
+                raise ValueError("Motif disagrees with the enzyme's recognition sequence")
+        return self
 
 
 class VersionedProfile(FrozenModel):

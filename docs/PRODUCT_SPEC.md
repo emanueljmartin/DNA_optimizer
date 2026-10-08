@@ -1,6 +1,6 @@
 # DNA Design Platform — authoritative product specification
 
-The complete product requirements below are preserved from sections B–AC of the initial bootstrap. Only Phase 1 is currently authorized. Implementation status and limitations live in architecture.md and development_plan.md; they do not weaken these requirements.
+The complete product requirements below are preserved from sections B–AC of the initial bootstrap. On 2026-10-08 the user authorized Phases 2–4 after Phase 1 verification, then approved building the full tool through Phases 5–8. Independent reliability studies will be planned together after the build. The original bootstrap's Phase 1 instructions remain below as historical text. Implementation status and limitations live in architecture.md and development_plan.md; they do not weaken these requirements.
 
 # B. PERMANENT ROLE
 

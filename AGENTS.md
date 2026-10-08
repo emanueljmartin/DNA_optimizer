@@ -30,3 +30,26 @@ Use Python >=3.12, a local .venv, pytest, and property-based tests for invariant
 Keep parsing, translation, motif matching, permissions, and final validation modular.
 Read docs/scientific_provenance.md before adding biological models or datasets.
 Unsupported biological representations must raise explicit errors, never be flattened.
+
+## Authorized continuation — 2026-10-08
+
+The user explicitly requested: "finish checking phase 1 and then continue with the
+next few phases." The agreed working scope is Phases 2–4 (codon optimization,
+synthesis, and local RBS prediction/design) after Phase 1 verification. This extends
+the original Phase 1 bootstrap authorization. At that checkpoint, Phase 5 and later
+were unauthorized; the subsequent full-tool authorization below extends the scope.
+All scientific invariants, provenance requirements, and Git safeguards still apply.
+
+## Full-tool authorization — 2026-10-08
+
+The user approved continuing through Phases 5–8: "sounds good. keep building the
+full tool. when done we can go over what tests we are to perform on what data to
+prove our tool can perform reliably." Build sequentially on the existing project.
+Implement and run engineering/integrity tests throughout; independent experimental
+reliability studies and their data/split choices will be discussed after the tool is
+built. Do not fabricate benchmark evidence or infer biological defaults.
+
+After each finished run, briefly report what was completed/tested, whether changes
+were committed or pushed, and next steps. The user reviews biological behavior and
+workflow; the agent owns implementation and automated verification. No automatic
+commit, push, publication or deployment is authorized.

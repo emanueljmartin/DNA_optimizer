@@ -4,6 +4,7 @@ import re
 
 from Bio import Restriction
 from Bio.Data import IUPACData
+from Bio.Restriction.Restriction import AllEnzymes
 from Bio.Seq import Seq
 
 from .models import (
@@ -74,7 +75,7 @@ def restriction_constraint(
 ) -> MotifConstraint:
     """Resolve a recognition motif, not restriction cuts or methylation behavior."""
     enzyme_class = getattr(Restriction, enzyme, None)
-    if enzyme_class is None or enzyme_class not in Restriction.AllEnzymes:
+    if enzyme_class is None or enzyme_class not in AllEnzymes:
         raise ValueError(f"Unknown restriction enzyme: {enzyme}")
     return MotifConstraint(
         id=id or f"{mode.value}:{enzyme}",

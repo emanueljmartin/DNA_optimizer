@@ -8,7 +8,7 @@ from Bio.SeqFeature import CompoundLocation, ExactPosition
 from pydantic import ValidationError
 
 from .errors import ParseError, TranslationError, UnsupportedLocationError
-from .models import CDSMode, Construct, Feature, Strand, Topology
+from .models import CDSMode, Construct, Feature, Mutability, Strand, Topology
 from .translation import translate_feature
 
 
@@ -69,6 +69,11 @@ def parse_genbank(text: str) -> Construct:
     if len(records) != 1:
         raise ParseError("Exactly one GenBank record is required")
     record = records[0]
+    molecule_type = record.annotations.get("molecule_type")
+    if molecule_type != "DNA":
+        raise ParseError(
+            f"Unsupported GenBank molecule type {molecule_type!r}; explicit DNA is required"
+        )
     try:
         dna = _normalize(str(record.seq))
     except Exception as exc:
@@ -103,17 +108,27 @@ def parse_genbank(text: str) -> Construct:
         )
         try:
             offset = int(_single_qualifier(qualifiers, "codon_start", "1")) - 1
-            table = int(_single_qualifier(qualifiers, "transl_table", "11"))
+            # INSDC/GenBank omission means standard code 1, independent of the
+            # platform's default for manually annotated bacterial CDSs.
+            table = int(_single_qualifier(qualifiers, "transl_table", "1"))
             feature = Feature(
-                id=f"gb:{index}",
+                id=_single_qualifier(qualifiers, "dna_design_id", f"gb:{index}"),
                 name=name,
                 feature_type=biofeature.type,
                 start=int(location.start),
                 end=int(location.end),
                 strand=Strand(location.strand or 0),
+                mutability=Mutability(_single_qualifier(qualifiers, "dna_mutability", "LOCKED"))
+                if "dna_mutability" in qualifiers
+                else None,
+                rbs_mask=_single_qualifier(qualifiers, "dna_design_rbs_mask", "") or None,
                 frame_offset=offset,
                 translation_table=table,
-                cds_mode=CDSMode.FRAGMENT if offset else CDSMode.COMPLETE,
+                cds_mode=CDSMode(
+                    _single_qualifier(
+                        qualifiers, "dna_design_cds_mode", "fragment" if offset else "complete"
+                    )
+                ),
                 description="; ".join(qualifiers.get("note", ())) or None,
                 qualifiers=qualifiers,
             )

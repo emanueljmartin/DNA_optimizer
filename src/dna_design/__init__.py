@@ -1,5 +1,6 @@
-"""DNA Design Platform: Phase 1 public domain interfaces."""
+"""DNA Design Platform: local scientific/domain interfaces; API dependencies optional."""
 
+from .benchmarks import BenchmarkManifest, evaluate_benchmark, load_benchmark
 from .coordinates import internal_to_ui, ui_to_internal
 from .errors import (
     DNAError,
@@ -8,6 +9,9 @@ from .errors import (
     TranslationError,
     UnsupportedLocationError,
 )
+from .execution import ExecutionControl, OperationCancelled
+from .gibson import GibsonPlan, GibsonSettings, plan_gibson, reconstruct, validate_gibson
+from .metrics import CDSCodonMetrics, codon_metrics, gc_fraction, local_gc, sequence_entropy
 from .models import (
     CDSMode,
     Construct,
@@ -22,8 +26,44 @@ from .models import (
     VersionedProfile,
 )
 from .motifs import MotifOccurrence, find_motif, restriction_constraint
+from .optimization import (
+    AdditionalLock,
+    Design,
+    ObjectiveWeights,
+    SearchConfig,
+    SearchResult,
+    optimize,
+    validate_search_candidate,
+)
 from .parsing import parse_fasta, parse_genbank, parse_raw
 from .permissions import BasePermission, effective_permissions
+from .profiles import CodonProfile, load_codon_profile, relative_codon_weights
+from .projects import DesignProject, export_project, load_project, save_draft, validate_project
+from .rbs import (
+    OSTIRBackend,
+    RBSBackend,
+    RBSBackendUnavailable,
+    RBSContext,
+    RBSDesignResult,
+    RBSDesignSettings,
+    RBSHost,
+    RBSModelError,
+    RBSPrediction,
+    design_rbs,
+    design_rbs_library,
+    predict_rbs,
+)
+from .reverse_translation import reverse_translate
+from .synthesis import (
+    FractionRange,
+    SynthesisFinding,
+    SynthesisProfile,
+    SynthesisRepairResult,
+    SynthesisReport,
+    load_synthesis_profile,
+    repair_synthesis,
+    scan_synthesis,
+)
 from .translation import extract_feature, translate_feature
 from .validation import (
     CheckStatus,
@@ -36,37 +76,88 @@ from .validation import (
 __version__ = "0.1.0"
 
 __all__ = [
+    "BenchmarkManifest",
+    "DesignProject",
+    "ExecutionControl",
+    "GibsonPlan",
+    "GibsonSettings",
+    "OperationCancelled",
+    "evaluate_benchmark",
+    "export_project",
+    "load_benchmark",
+    "load_project",
+    "plan_gibson",
+    "reconstruct",
+    "save_draft",
+    "validate_gibson",
+    "validate_project",
+    "AdditionalLock",
     "BasePermission",
     "CDSMode",
+    "CDSCodonMetrics",
     "CheckStatus",
     "Construct",
     "DNAError",
+    "CodonProfile",
+    "Design",
     "Feature",
     "Finding",
+    "FractionRange",
     "InvalidDesignError",
     "MotifConstraint",
     "MotifMode",
     "MotifOccurrence",
     "MotifStrand",
     "Mutability",
+    "OSTIRBackend",
+    "ObjectiveWeights",
     "ParseError",
+    "RBSBackend",
+    "RBSBackendUnavailable",
+    "RBSContext",
+    "RBSDesignResult",
+    "RBSDesignSettings",
+    "RBSHost",
+    "RBSModelError",
+    "RBSPrediction",
     "Region",
     "Strand",
+    "SearchConfig",
+    "SearchResult",
+    "SynthesisFinding",
+    "SynthesisProfile",
+    "SynthesisRepairResult",
+    "SynthesisReport",
     "Topology",
     "TranslationError",
     "UnsupportedLocationError",
     "ValidationReport",
     "VersionedProfile",
     "check_feasibility",
+    "codon_metrics",
+    "design_rbs",
+    "design_rbs_library",
     "effective_permissions",
     "extract_feature",
     "find_motif",
+    "gc_fraction",
     "internal_to_ui",
+    "load_codon_profile",
+    "load_synthesis_profile",
+    "local_gc",
+    "optimize",
     "parse_fasta",
     "parse_genbank",
     "parse_raw",
+    "predict_rbs",
+    "relative_codon_weights",
+    "repair_synthesis",
     "restriction_constraint",
+    "reverse_translate",
+    "scan_synthesis",
+    "sequence_entropy",
     "translate_feature",
     "ui_to_internal",
     "validate_candidate",
+    "validate_search_candidate",
 ]
